@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School ERP Cost Estimator - India</title>
+    <style>
+        /* --- General Body & Container Styles (Common to both views) --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #eef2f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container, .admin-container-mixed {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        h3 {
+            color: #4a4a4a;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .section {
+            margin-bottom: 35px;
+            background-color: #f9fbfd;
+            border: 1px solid #e3e8ed;
+            border-radius: 8px;
+            padding: 25px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .input-group input[type="number"],
+        .input-group select {
+            width: calc(100% - 22px);
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .feature-item input[type="checkbox"] {
+            margin-top: 5px;
+            transform: scale(1.2);
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .feature-item label {
+            flex-grow: 1;
+            font-weight: normal;
+            cursor: pointer;
+            color: #444;
+        }
+        .result-box {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            padding: 30px;
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-top: 40px;
+            color: #155724;
+            position: relative; /* Added for responsiveness of inner spans */
+        }
+        .result-box span {
+            font-size: 38px;
+            color: #0056b3;
+            display: block;
+            margin-top: 10px;
+            white-space: nowrap; /* Prevent numbers from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis if text overflows */
+        }
+        .one-time-cost, .cost-per-user-detail {
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #0056b3;
+            font-weight: normal;
+        }
+
+        /* --- Admin Button Styling --- */
+        .admin-link-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .admin-button, .back-button-mixed {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none; /* Add border:none for buttons */
+        }
+        .admin-button:hover, .back-button-mixed:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Admin Dashboard Specific Styles (for combined view) --- */
+        .admin-container-mixed {
+            max-width: 800px;
+        }
+        .cost-summary-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cost-summary-item:last-child {
+            border-bottom: none;
+        }
+        .cost-summary-item span {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+            margin-top: 0;
+            display: inline-block;
+        }
+        .section.adjusted-costs {
+            background-color: #ffe0b2;
+            border-color: #ff9800;
+        }
+        .back-button-mixed {
+            background-color: #6c757d;
+        }
+        .back-button-mixed:hover {
+            background-color: #5a6268;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            max-width: 150px; /* Adjust logo size */
+            height: auto;
+        }
+
+        /* --- Media Queries for Responsiveness --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container, .admin-container-mixed {
+                padding: 20px;
+                margin: 10px auto;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.4em;
+            }
+            h3 {
+                font-size: 1.1em;
+            }
+            .input-group input[type="number"],
+            .input-group select {
+                width: calc(100% - 20px); /* Adjust width for smaller padding */
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            .feature-item {
+                flex-direction: column; /* Stack checkbox and label */
+                align-items: flex-start;
+            }
+            .feature-item input[type="checkbox"] {
+                margin-bottom: 8px; /* Space between checkbox and label */
+            }
+            .result-box {
+                padding: 20px;
+                font-size: 20px;
+            }
+            .result-box span {
+                font-size: 30px;
+            }
+            .admin-button, .back-button-mixed {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .cost-summary-item {
+                flex-direction: column; /* Stack label and value */
+                align-items: flex-start;
+            }
+            .cost-summary-item span {
+                margin-top: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .result-box {
+                font-size: 18px;
+            }
+            .result-box span {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="mainEstimatorPage" class="container">
+        <div class="logo-container">
+            <img src="https://jbrec.edu.in/wp-content/uploads/2025/02/JBREC-Logo-1-1.jpg" alt="JBREC Logo">
+        </div>
+        <h1>Joginpally B R Engineering College</h1>
+        <h2>ERP Cost Estimate</h2>
+
+        <div class="section">
+            <h3>I. User Count</h3>
+            <div class="input-group">
+                <label for="numStudents">Number of Students:</label>
+                <input type="number" id="numStudents" value="100" min="1">
+            </div>
+            <div class="input-group">
+                <label for="numTeachers">Number of Teachers/Staff:</label>
+                <input type="number" id="numTeachers" value="10" min="1">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>II. Core Functionalities (Select all that apply)</h3>
+            <div class="feature-item">
+                <input type="checkbox" id="studentProfiles" data-cost-per-student="5" data-cost-per-teacher="1">
+                <label for="studentProfiles">Student Information: Centralized profiles, academic records, personal details.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="staffManagement" data-cost-per-student="0" data-cost-per-teacher="20">
+                <label for="staffManagement">Staff Management: Employee details, roles, contact information.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="attendance" data-cost-per-student="3" data-cost-per-teacher="4">
+                <label for="attendance">Attendance: Digital tracking, real-time updates for parents/staff.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="feeManagement" data-cost-per-student="8" data-cost-per-teacher="0">
+                <label for="feeManagement">Fee Management: Online payments, automated reminders, receipt generation.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="timetableScheduling" data-cost-per-student="10" data-cost-per-teacher="5">
+                <label for="timetableScheduling">Timetable/Scheduling: Class schedules, teacher assignments, room allocation.</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>III. Communication & Engagement</h3>
+            <div class="feature-item">
+                <input type="checkbox" id="announcements" data-cost-per-student="3" data-cost-per-teacher="2">
+                <label for="announcements">Announcements/Notifications: Instant alerts via SMS/push for school news, events, emergencies.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="parentTeacherComm" data-cost-per-student="5" data-cost-per-teacher="5">
+                <label for="parentTeacherComm">Parent-Teacher Communication: Secure messaging platform.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="homeworkAssignments" data-cost-per-student="5" data-cost-per-teacher="3">
+                <label for="homeworkAssignments">Homework/Assignments: Digital submission and tracking.</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>IV. Academic & Records</h3>
+            <div class="feature-item">
+                <input type="checkbox" id="examinationManagement" data-cost-per-student="10" data-cost-per-teacher="2">
+                <label for="examinationManagement">Examination Management: Schedule, mark entry, grade calculation, report card generation.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="libraryManagement" data-cost-per-student="1" data-cost-per-teacher="0">
+                <label for="libraryManagement">Library Management: Book inventory, issuance, returns, overdue tracking.</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>V. Administration & Resources</h3>
+            <div class="feature-item">
+                <input type="checkbox" id="admissionManagement" data-cost-per-student="6" data-cost-per-teacher="0">
+                <label for="admissionManagement">Admission Management: Inquiry to enrollment process.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="transportManagement" data-cost-per-student="4" data-cost-per-teacher="2">
+                <label for="transportManagement">Transport Management: Route tracking, student allocation.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="inventoryManagement" data-cost-per-student="0" data-cost-per-teacher="5">
+                <label for="inventoryManagement">Inventory Management: Track assets, supplies, lab equipment.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="hrPayroll" data-cost-per-student="0" data-cost-per-teacher="7">
+                <label for="hrPayroll">HR & Payroll (for staff): Leave management, salary processing.</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>VI. User Experience & Reporting</h3>
+            <div class="feature-item">
+                <input type="checkbox" id="dashboard" data-cost-per-student="4" data-cost-per-teacher="2">
+                <label for="dashboard">Dashboard: Personalized overview for students, parents, teachers, admin.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="multiDeviceAccess" data-cost-per-student="2" data-cost-per-teacher="2">
+                <label for="multiDeviceAccess">Multi-Device Access: Web and mobile app compatibility.</label>
+            </div>
+            <div class="feature-item">
+                <input type="checkbox" id="reportingAnalytics" data-cost-per-student="2" data-cost-per-teacher="8">
+                <label for="reportingAnalytics">Reporting & Analytics: Generate performance, attendance, financial reports.</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>VII. One-Time Setup & Customization Factors</h3>
+            <div class="input-group">
+                <label for="customizationLevel">Level of Customization Required:</label>
+                <select id="customizationLevel">
+                    <option value="1">Standard (Off-the-shelf, minimal changes)</option>
+                    <option value="1.2">Moderate (Some custom reports, workflows)</option>
+                    <option value="1.5">Extensive (New features, complex integrations)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="dataMigrationComplexity">Data Migration Complexity (One-time cost):</label>
+                <select id="dataMigrationComplexity">
+                    <option value="0">None / Self-migration</option>
+                    <option value="25000">Basic (Clean data, few sources)</option>
+                    <option value="75000">Medium (Multiple sources, some cleaning)</option>
+                    <option value="150000">Complex (Disparate systems, heavy data transformation)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="trainingRequired">Training & Onboarding (One-time cost):</label>
+                <select id="trainingRequired">
+                    <option value="0">Basic online tutorials</option>
+                    <option value="15000">Standard (Remote sessions for key users)</option>
+                    <option value="50000">Comprehensive (On-site training, admin workshops)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result-box">
+            Estimated Monthly Cost: <br> ₹ <span id="estimatedMonthlyCost">0</span>
+            <div class="one-time-cost">
+                Estimated One-Time Setup Cost: ₹ <span id="estimatedOneTimeCost">0</span>
+            </div>
+            <div class="cost-per-user-detail">
+                Cost Per Student Per Month: ₹ <span id="costPerStudentPerMonth">0</span>
+            </div>
+            <div class="cost-per-user-detail">
+                Cost Per Teacher Per Month: ₹ <span id="costPerTeacherPerMonth">0</span>
+            </div>
+        </div>
+
+        
+
+        <div class="admin-link-container">
+            <button id="showAdminPageButton" class="admin-button">Go to Admin Cost Dashboard</button>
+        </div>
+    </div>
+
+    <div id="adminDashboardPage" class="admin-container-mixed" style="display: none;">
+        <h1>Admin Dashboard: Estimated Monthly Costs</h1>
+        <p class="subtitle">This dashboard of estimated customer cost.</p>
+
+        <div class="section">
+            <h3>Customer-Facing Estimated Monthly Cost</h3>
+            <div class="cost-summary-item">
+                Total Monthly: ₹ <span id="customerMonthlyCost">0</span>
+            </div>
+            <div class="cost-summary-item">
+                Per Student Per Month: ₹ <span id="customerCostPerStudent">0</span>
+            </div>
+            <div class="cost-summary-item">
+                Per Teacher Per Month: ₹ <span id="customerCostPerTeacher">0</span>
+            </div>
+        </div>
+
+        <div class="section adjusted-costs">
+            <h3> Internal Monthly Cost </h3>
+            <div class="cost-summary-item">
+                Total Monthly : ₹ <span id="adjustedTotalMonthlyCost">0</span>
+            </div>
+            <div class="cost-summary-item">
+                Per Student Per Month : ₹ <span id="adjustedCostPerStudent">0</span>
+            </div>
+            <div class="cost-summary-item">
+                Per Teacher Per Month : ₹ <span id="adjustedCostPerTeacher">0</span>
+            </div>
+        </div>
+
+        <div class="back-button-container">
+            <button id="backToEstimatorButton" class="back-button-mixed">Back to Estimator</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Common Elements & Setup ---
+        const mainEstimatorPage = document.getElementById('mainEstimatorPage');
+        const adminDashboardPage = document.getElementById('adminDashboardPage');
+        const showAdminPageButton = document.getElementById('showAdminPageButton');
+        const backToEstimatorButton = document.getElementById('backToEstimatorButton');
+
+        // --- Estimator Page Elements ---
+        const features = document.querySelectorAll('.feature-item input[type="checkbox"]');
+        const numStudentsInput = document.getElementById('numStudents');
+        const numTeachersInput = document.getElementById('numTeachers');
+        const customizationLevelSelect = document.getElementById('customizationLevel');
+        const dataMigrationComplexitySelect = document.getElementById('dataMigrationComplexity');
+        const trainingRequiredSelect = document.getElementById('trainingRequired');
+        const estimatedMonthlyCostSpan = document.getElementById('estimatedMonthlyCost');
+        const estimatedOneTimeCostSpan = document.getElementById('estimatedOneTimeCost');
+        const costPerStudentPerMonthSpan = document.getElementById('costPerStudentPerMonth');
+        const costPerTeacherPerMonthSpan = document.getElementById('costPerTeacherPerMonth');
+
+        // Define base costs (illustrative values in INR)
+        const BASE_COST_PER_STUDENT_PER_MONTH = 45; // INR
+        const BASE_COST_PER_TEACHER_PER_MONTH = 15; // INR
+        const BASE_SETUP_COST = 50000; // INR (Minimum setup cost for any ERP)
+
+        // Discount for large student count
+        const BULK_DISCOUNT_AMOUNT = 0.1; // INR (Changed back to 0.6 as per original request)
+
+        /**
+         * Calculates and updates the estimated ERP costs on the main estimator page.
+         * Returns an object containing the calculated customer costs.
+         */
+        function calculateCost() {
+            let totalMonthlyCostForStudents = 0;
+            let totalMonthlyCostForTeachers = 0;
+            let totalOneTimeCost = BASE_SETUP_COST;
+
+            const numStudents = parseInt(numStudentsInput.value) || 0;
+            const numTeachers = parseInt(numTeachersInput.value) || 0;
+
+            // Determine if bulk discount applies
+            const applyBulkDiscount = numStudents > 1000;
+            let currentStudentBaseCost = BASE_COST_PER_STUDENT_PER_MONTH;
+            let currentTeacherBaseCost = BASE_COST_PER_TEACHER_PER_MONTH;
+
+            if (applyBulkDiscount) {
+                currentStudentBaseCost = Math.max(0, BASE_COST_PER_STUDENT_PER_MONTH - BULK_DISCOUNT_AMOUNT);
+                currentTeacherBaseCost = Math.max(0, BASE_COST_PER_TEACHER_PER_MONTH - BULK_DISCOUNT_AMOUNT);
+            }
+
+            // Add base per-user monthly costs (adjusted for discount)
+            totalMonthlyCostForStudents += numStudents * currentStudentBaseCost;
+            totalMonthlyCostForTeachers += numTeachers * currentTeacherBaseCost;
+
+            // Calculate monthly cost from selected features
+            features.forEach(feature => {
+                if (feature.checked) {
+                    let costPerStudentFeature = parseFloat(feature.dataset.costPerStudent) || 0;
+                    let costPerTeacherFeature = parseFloat(feature.dataset.costPerTeacher) || 0;
+
+                    if (applyBulkDiscount) {
+                        costPerStudentFeature = Math.max(0, costPerStudentFeature - BULK_DISCOUNT_AMOUNT);
+                        costPerTeacherFeature = Math.max(0, costPerTeacherFeature - BULK_DISCOUNT_AMOUNT);
+                    }
+
+                    totalMonthlyCostForStudents += numStudents * costPerStudentFeature;
+                    totalMonthlyCostForTeachers += numTeachers * costPerTeacherFeature;
+                }
+            });
+
+            // Apply customization factor to core monthly costs and base setup cost
+            const customizationFactor = parseFloat(customizationLevelSelect.value);
+            totalMonthlyCostForStudents *= customizationFactor;
+            totalMonthlyCostForTeachers *= customizationFactor;
+            totalOneTimeCost *= customizationFactor; // Customization also increases setup cost
+
+            // Add one-time data migration cost
+            totalOneTimeCost += parseFloat(dataMigrationComplexitySelect.value);
+
+            // Add one-time training cost
+            totalOneTimeCost += parseFloat(trainingRequiredSelect.value);
+
+            // Sum up total monthly cost
+            const finalMonthlyCost = totalMonthlyCostForStudents + totalMonthlyCostForTeachers;
+
+            // Calculate cost per student per month
+            let costPerStudent = 0;
+            if (numStudents > 0) {
+                costPerStudent = totalMonthlyCostForStudents / numStudents;
+            }
+
+            // Calculate cost per teacher per month
+            let costPerTeacher = 0;
+            if (numTeachers > 0) {
+                costPerTeacher = totalMonthlyCostForTeachers / numTeachers;
+            }
+
+            // Update the displayed costs, formatted for INR
+            estimatedMonthlyCostSpan.textContent = finalMonthlyCost.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            estimatedOneTimeCostSpan.textContent = totalOneTimeCost.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            costPerStudentPerMonthSpan.textContent = costPerStudent.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            costPerTeacherPerMonthSpan.textContent = costPerTeacher.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Return the raw calculated numbers for use in admin calculations
+            return {
+                numStudents: numStudents,
+                numTeachers: numTeachers,
+                customerMonthlyCost: finalMonthlyCost,
+                customerCostPerStudent: costPerStudent,
+                customerCostPerTeacher: costPerTeacher
+            };
+        }
+
+        // --- Admin Page Elements ---
+        const customerMonthlyCostSpan = document.getElementById('customerMonthlyCost');
+        const customerCostPerStudentSpan = document.getElementById('customerCostPerStudent');
+        const customerCostPerTeacherSpan = document.getElementById('customerCostPerTeacher');
+        const adjustedTotalMonthlyCostSpan = document.getElementById('adjustedTotalMonthlyCost');
+        const adjustedCostPerStudentSpan = document.getElementById('adjustedCostPerStudent');
+        const adjustedCostPerTeacherSpan = document.getElementById('adjustedCostPerTeacher');
+
+        // Fixed deduction amounts as per your request
+        const DEDUCTION_PER_STUDENT = 23.52; // INR
+        const DEDUCTION_PER_TEACHER = 11.23; // INR
+
+        /**
+         * Calculates and displays the adjusted internal costs on the admin page.
+         */
+        function calculateAdjustedCosts() {
+            // Get the calculated customer costs directly from calculateCost()
+            // This ensures all values are up-to-date before admin calculation
+            const customerCosts = calculateCost(); 
+
+            const numStudents = customerCosts.numStudents;
+            const numTeachers = customerCosts.numTeachers;
+            const customerMonthlyCost = customerCosts.customerMonthlyCost;
+            const customerCostPerStudent = customerCosts.customerCostPerStudent;
+            const customerCostPerTeacher = customerCosts.customerCostPerTeacher;
+
+            // --- Perform Deductions ---
+            const totalStudentDeduction = numStudents * DEDUCTION_PER_STUDENT;
+            const totalTeacherDeduction = numTeachers * DEDUCTION_PER_TEACHER;
+
+            // Adjusted Total Monthly Cost
+            const adjustedTotalMonthlyCost = customerMonthlyCost - (totalStudentDeduction + totalTeacherDeduction);
+
+            // Adjusted Per-User Costs
+            const adjustedCostPerStudent = customerCostPerStudent - DEDUCTION_PER_STUDENT;
+            const adjustedCostPerTeacher = customerCostPerTeacher - DEDUCTION_PER_TEACHER;
+
+            // Ensure costs don't go negative if deductions are larger than customer cost
+            const finalAdjustedTotalMonthlyCost = Math.max(0, adjustedTotalMonthlyCost);
+            const finalAdjustedCostPerStudent = Math.max(0, adjustedCostPerStudent);
+            const finalAdjustedCostPerTeacher = Math.max(0, adjustedCostPerTeacher);
+
+
+            // --- Update Display ---
+            // Display customer-facing costs (as retrieved from calculateCost's return)
+            customerMonthlyCostSpan.textContent = customerMonthlyCost.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            customerCostPerStudentSpan.textContent = customerCostPerStudent.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            customerCostPerTeacherSpan.textContent = customerCostPerTeacher.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Display adjusted internal costs
+            adjustedTotalMonthlyCostSpan.textContent = finalAdjustedTotalMonthlyCost.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            adjustedCostPerStudentSpan.textContent = finalAdjustedCostPerStudent.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            adjustedCostPerTeacherSpan.textContent = finalAdjustedCostPerTeacher.toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        // --- Event Listeners for Page Switching ---
+        showAdminPageButton.addEventListener('click', () => {
+            calculateAdjustedCosts(); // Calculate adjusted costs before showing admin page
+            mainEstimatorPage.style.display = 'none';
+            adminDashboardPage.style.display = 'block';
+        });
+
+        backToEstimatorButton.addEventListener('click', () => {
+            adminDashboardPage.style.display = 'none';
+            mainEstimatorPage.style.display = 'block';
+        });
+
+        // --- Event Listeners for Main Estimator (to recalculate on input change) ---
+        features.forEach(feature => {
+            feature.addEventListener('change', calculateCost);
+        });
+        numStudentsInput.addEventListener('input', calculateCost);
+        numTeachersInput.addEventListener('input', calculateCost);
+        customizationLevelSelect.addEventListener('change', calculateCost);
+        dataMigrationComplexitySelect.addEventListener('change', calculateCost);
+        trainingRequiredSelect.addEventListener('change', calculateCost);
+
+        // Initial calculation on page load for the estimator
+        calculateCost();
+    </script>
+</body>
+</html>
